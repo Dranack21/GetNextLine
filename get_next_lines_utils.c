@@ -1,24 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   get_next_lines_utils.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: habouda <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/27 15:51:30 by habouda           #+#    #+#             */
-/*   Updated: 2024/05/27 17:10:57 by habouda          ###   ########.fr       */
+/*   Created: 2024/05/27 16:36:11 by habouda           #+#    #+#             */
+/*   Updated: 2024/05/27 16:47:18 by habouda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "get_next_line.h"
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
+void	ft_putchar(char c)
+{
+	write(1, &c, 1);
+}
 
-# include <stdlib.h>
-# include <unistd.h>
-# define BUFFER_SIZE = 42;
+char	*ft_strdup(const char *source)
+{
+	int		i;
+	char	*buffer;
 
-void	ft_putchar(char c);
-char	*ft_strdup(const char *source);
-
-#endif
+	i = ft_strlen(source);
+	buffer = malloc(i * sizeof(char) + 1);
+	if (!buffer)
+		return (NULL);
+	i = 0;
+	while (source[i])
+	{
+		buffer[i] = source[i];
+		i++;
+	}
+	buffer[i] = '\0';
+	return (buffer);
+}
