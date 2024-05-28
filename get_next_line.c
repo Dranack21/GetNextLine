@@ -6,7 +6,7 @@
 /*   By: habouda <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 15:48:04 by habouda           #+#    #+#             */
-/*   Updated: 2024/05/28 15:44:26 by habouda          ###   ########.fr       */
+/*   Updated: 2024/05/29 00:25:50 by habouda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,26 +14,26 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
 
-void	*ft_bzero(void *s, size_t n)
+size_t	ft_strlen(char const *str)
 {
-	size_t	i;
+	size_t i;
 
 	i = 0;
-	while (i < n)
+	while (str[i])
 	{
-		((char *)s)[i] = '\0';
 		i++;
 	}
-	return (s);
+	return (i);
 }
-
 char	*ft_strdup(const char *source)
 {
 	int		i;
 	char	*buffer;
 
-	i = strlen(source);
+	i = ft_strlen(source);
 	buffer = malloc(i * sizeof(char) + 1);
 	if (!buffer)
 		return (NULL);
@@ -47,58 +47,25 @@ char	*ft_strdup(const char *source)
 	return (buffer);
 }
 
-int	check_stash(char *stash)
-{
-	int	i;
-
-	i = 0;
-	while (stash[i] && stash[i] != '\n')
-		i++;
-	if (!stash[i] && stash[i] != '\n')
-		return (0);
-	else 
-		return (i);
-}
-
-static 	char	*line_cutter(char *stash)
-{
-	int		i;
-	int		k;
-	char	*new;
-
-	k = 0;
-	i = 0;
-	while (stash[i] && stash[i] !=  '\n')
-		i++;
-	new = malloc(sizeof(char) * i + 1);
-	while (k < i && stash[k])
-	{
-		new[k] = stash[k];
-		k++;
-	}
-	new[k] = '\0';
-	return (new);
-}
-
-char	*ft_strjoin(char const *old, char const *new)
+char	*ft_strjoin(char const *s1, char const *s2)
 {
 	char	*dest;
 	int		i;
 	int		j;
 
-	dest = malloc (sizeof(char) * (strlen(old) + strlen(new) + 1));
+	dest = malloc (sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
 	if (!dest)
 		return (NULL);
 	i = 0;
 	j = 0;
-	while (old[i])
+	while (s1[i])
 	{
-		dest[i] = old[i];
+		dest[i] = s1[i];
 		i++;
 	}
-	while (new[j])
+	while (s2[j])
 	{
-		dest[i] = new[j];
+		dest[i] = s2[j];
 		i++;
 		j++;
 	}
@@ -106,59 +73,115 @@ char	*ft_strjoin(char const *old, char const *new)
 	return (dest);
 }
 
-char	*get_next_line(int fd)
+size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 {
-	int		bytes_read;
-	char	buffer[BUFFER_SIZE + 1];
-	char	*line;
-	static	char *stash;
+	size_t	i;
+	size_t	src_len;
 
-	if (fd < 0 )
-		return (NULL);
-	bytes_read = read(fd, buffer, BUFFER_SIZE);
-	buffer[bytes_read] = '\0';
-	if (!stash)
-		stash = ft_strdup(buffer);
-	if (check_stash(stash) == 0)
+	i = 0;
+	src_len = ft_strlen(src);
+	if (!src || !dst)
+		return (src_len);
+	if (size <= 0)
+		return (src_len);
+	while (src[i] != '\0' && i < size - 1)
 	{
-		ft_bzero(buffer, BUFFER_SIZE);
-		bytes_read = read(fd, buffer, BUFFER_SIZE);
-		line = ft_strdup(buffer);
-		stash = ft_strjoin(stash, line);
-		free (line);
+		dst[i] = src[i];
+		i++;
 	}
-	line = line_cutter(stash);
-	if (!stash)
-		return (NULL);
-	stash = stash + strlen(line) + 1;
+	dst[i] = '\0';
+	return (src_len);
+}
+
+char	*fill_line(char *stash)
+{
+	int		i;
+	char	*line;
+
+	i = 0;
+	while (stash[i] != '\n' && stash[i])
+		i++;
+	if (stash[i] == 0 || stash[1] == 0)
+	{
+		line = NULL;
+    	return (line);
+	}
+	if (stash[i] == '\n')
+	{
+		line = malloc(sizeof(char) * i + 1);
+		ft_strlcpy(line, stash, i + 2);
+		if (!line)
+		{
+			free (line);
+			line = NULL;
+		}
+	}
+	else 
+		line = NULL;
 	return (line);
 }
 
-
-#include "get_next_line.h"
-int main(void)
+static char *read_and_fill_stash(int fd, char *buffer, char *stash)
 {
-    int fd;
-    char *line;
+	ssize_t	bytes_read;
+	char	*temp;
 
-    // Ouvrir le fichier test.txt en lecture seule
-    fd = open("test.txt", O_RDONLY);
-    if (fd == -1)
-    {
-        perror("Error opening file");
-        return (1);
-    }
-
-    // Lire et afficher les lignes du fichier jusqu'à la fin
-    while ((line = get_next_line(fd)) != NULL)
-    {
-        printf("%s\n", line);
-        free(line);  // Libérer la mémoire allouée pour la ligne
-    }
-
-    // Fermer le fichier
-    close(fd);
-    return (0);
+	bytes_read = 1;
+	while (bytes_read > 0)
+	{
+		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		if (bytes_read < 0)
+			break;
+		if (bytes_read == 0)
+			break;
+	if (!stash)
+		stash = ft_strdup("");
+	temp = ft_strdup(stash);
+	stash = ft_strjoin(temp, buffer);
+ 	}
+	return (stash);
 }
 
+char	*get_next_line(int fd)
+{
+	char	buffer[BUFFER_SIZE];
+	char	*line;
+	static	char *stash;
 
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+		return (NULL);
+	stash = read_and_fill_stash(fd, buffer, stash);
+	if (! stash|| stash[0] == '\0')
+		return (NULL);
+	line = fill_line (stash);
+	if (line)
+		stash = stash + ft_strlen(line);
+	else
+		stash++;
+	return (line);
+}
+
+int main(void)
+{
+	int fd;
+	char *line;
+
+	// Open the file test.txt in read-only mode
+	fd = open("test.txt", O_RDONLY);
+	if (fd == -1)
+	{
+		perror("Error opening file");
+		return (1);
+	}
+
+	// Read and display lines from the file until the end
+	while ((line = get_next_line(fd)) != NULL)
+	{
+		printf("%s", line);
+		free(line);  // Free the memory allocated for the line
+	}
+
+	// Close the file
+	close(fd);
+	return (0);
+}
