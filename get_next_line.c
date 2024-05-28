@@ -6,7 +6,7 @@
 /*   By: habouda <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 15:48:04 by habouda           #+#    #+#             */
-/*   Updated: 2024/05/28 13:01:04 by habouda          ###   ########.fr       */
+/*   Updated: 2024/05/28 14:18:32 by habouda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,25 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <string.h>
+
+char	*ft_strdup(const char *source)
+{
+	int		i;
+	char	*buffer;
+
+	i = strlen(source);
+	buffer = malloc(i * sizeof(char) + 1);
+	if (!buffer)
+		return (NULL);
+	i = 0;
+	while (source[i])
+	{
+		buffer[i] = source[i];
+		i++;
+	}
+	buffer[i] = '\0';
+	return (buffer);
+}
 
 int	check_stash(char *stash)
 {
@@ -83,20 +102,24 @@ char	*get_next_line(int fd)
 
 	if (fd < 0)
 		return (NULL);
-	bytes_read = read(fd, &buffer, BUFFER_SIZE);
+	bytes_read = read(fd, buffer, BUFFER_SIZE);
+	buffer[bytes_read] = '\0';
 	if (!stash)
-		stash = buffer;
-	else 
-	{
-		stash = ft_strjoin(buffer, stash);
-	}
-	if (check_stash(stash) != 0)
+		stash = ft_strdup(buffer);
+	if (check_stash(stash) == 0)
 	{
 		line = line_cutter(stash);
 		stash = stash + strlen(line) + 1;
+		line = ft_strjoin(stash, line);
+		stash = NULL;
 		return (line);
 	}
-	return (stash);
+	line = line_cutter(stash);
+	stash = stash + strlen(line) + 1;
+	if (!stash)
+		return (NULL);
+	return (line);
+
 }
 
 
@@ -114,11 +137,27 @@ int main(void)
     }
 
     // Lire et afficher les lignes du fichier jusqu'à la fin
-    while ((line = get_next_line(fd)) != NULL)
+   line = get_next_line(fd);
     {
         printf("%s\n", line); // Libérer la mémoire allouée pour la ligne
     }
-
+	 line = get_next_line(fd);
+    {
+        printf("%s\n", line); // Libérer la mémoire allouée pour la ligne
+    }
+	 line = get_next_line(fd);
+    {
+        printf("%s\n", line); // Libérer la mémoire allouée pour la ligne
+    }
+	 line = get_next_line(fd);
+    {
+        printf("%s\n", line); // Libérer la mémoire allouée pour la ligne
+    }
+	 line = get_next_line(fd);
+    {
+        printf("%s\n", line); // Libérer la mémoire allouée pour la ligne
+    }
+	
     // Fermer le fichier
     close(fd);
     return (0);
