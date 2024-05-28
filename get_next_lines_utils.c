@@ -6,17 +6,23 @@
 /*   By: habouda <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 16:36:11 by habouda           #+#    #+#             */
-/*   Updated: 2024/05/27 16:47:18 by habouda          ###   ########.fr       */
+/*   Updated: 2024/05/28 11:13:15 by habouda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-void	ft_putchar(char c)
+size_t	ft_strlen(char const *str)
 {
-	write(1, &c, 1);
-}
+	size_t i;
 
+	i = 0;
+	while (str[i])
+	{
+		i++;
+	}
+	return (i);
+}
 char	*ft_strdup(const char *source)
 {
 	int		i;
