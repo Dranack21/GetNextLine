@@ -6,7 +6,7 @@
 /*   By: habouda <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 15:48:04 by habouda           #+#    #+#             */
-/*   Updated: 2024/05/30 00:45:24 by habouda          ###   ########.fr       */
+/*   Updated: 2024/05/30 00:49:29 by habouda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ static	char	*clear_stash(char *stash)
 	}
 }
 
-static char	*read_and_fill_stash(int fd,  char **stash)
+static char	*read_and_fill_stash(int fd,  char *stash)
 {
 	ssize_t	bytes_read;
 	char	*temp;
@@ -153,17 +153,17 @@ static char	*read_and_fill_stash(int fd,  char **stash)
 		if (bytes_read < 0)
 			break ;
 		buffer[bytes_read] = '\0';
-		if (!*stash)
-			*stash = ft_strdup("");
-		temp = ft_strdup(*stash);
-		free (*stash);
-		*stash = ft_strjoin(temp, buffer);
+		if (!stash)
+			stash = ft_strdup("");
+		temp = ft_strdup(stash);
+		free (stash);
+		stash = ft_strjoin(temp, buffer);
 		free (temp);
 		temp = NULL;
 		if (ft_strchr(buffer, '\n'))
 			break ;
 	}
-	return (free(buffer), *stash);
+	return (free(buffer), stash);
 }
 
 char	*get_next_line(int fd)
@@ -177,7 +177,7 @@ char	*get_next_line(int fd)
 		stash = NULL;
 		return (NULL);
 	}
-	stash = read_and_fill_stash(fd, &stash);
+	stash = read_and_fill_stash(fd, stash);
 	if (!stash || stash[0] == '\0')
 	{
 		free (stash);
