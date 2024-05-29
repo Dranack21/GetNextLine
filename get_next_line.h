@@ -6,7 +6,7 @@
 /*   By: habouda <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 15:51:30 by habouda           #+#    #+#             */
-/*   Updated: 2024/05/29 14:57:24 by habouda          ###   ########.fr       */
+/*   Updated: 2024/05/29 15:30:45 by habouda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,11 @@
 # define GET_NEXT_LINE_H
 # include <stdlib.h>
 # include <unistd.h>
+# include <stdio.h>
+# include <fcntl.h>
+# include <string.h>
 
+# define BUFFER_SIZE 42
 char	*get_next_line(int fd);
 char	*ft_strdup(const char *source);
 char	*ft_strjoin(char const *s1, char const *s2);

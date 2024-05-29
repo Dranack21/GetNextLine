@@ -6,16 +6,16 @@
 /*   By: habouda <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 15:48:04 by habouda           #+#    #+#             */
-/*   Updated: 2024/05/29 14:57:54 by habouda          ###   ########.fr       */
+/*   Updated: 2024/05/29 16:15:16 by habouda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
-#include <fcntl.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
+# include <stdlib.h>
+# include <unistd.h>
+# include <stdio.h>
+# include <fcntl.h>
+# include <string.h>
 
 size_t	ft_strlen(char const *str)
 {
@@ -123,12 +123,14 @@ static	char	*clear_stash(char *stash)
 	{
 		new_stash = ft_strdup(&stash[i]);
 		free (stash);
+		stash = NULL;
 		return (new_stash);
 	}
 	else
 	{
 		new_stash = ft_strdup(&stash[i + 1]);
 		free (stash);
+		stash = NULL;
 		return (new_stash);
 	}
 }
@@ -148,8 +150,22 @@ static char *read_and_fill_stash(int fd, char *buffer, char *stash)
 			break;
 	if (!stash)
 		stash = ft_strdup("");
+	if (!stash)
+	{
+		free (stash);
+		stash = NULL;
+		return (NULL);
+	}
 	temp = ft_strdup(stash);
+	if (!temp)
+	{
+		free (temp);
+		temp = NULL;
+		return (temp);
+	}
 	stash = ft_strjoin(temp, buffer);
+	free (temp);
+	temp = NULL;
  	}
 	return (stash);
 }
@@ -161,10 +177,18 @@ char	*get_next_line(int fd)
 	static	char *stash;
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+	{
+		free(stash);
+		stash = NULL;
 		return (NULL);
+	}
 	stash = read_and_fill_stash(fd, buffer, stash);
-	if (!stash|| stash[0] == '\0')
+	if (!stash || stash[0] == '\0')
+	{
+		free (stash);
+		stash = NULL;
 		return (NULL);
+	}
 	line = fill_line (stash);
 	if (line)
 	{
