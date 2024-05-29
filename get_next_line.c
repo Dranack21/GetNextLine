@@ -6,7 +6,7 @@
 /*   By: habouda <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 15:48:04 by habouda           #+#    #+#             */
-/*   Updated: 2024/05/30 00:49:29 by habouda          ###   ########.fr       */
+/*   Updated: 2024/05/30 01:09:42 by habouda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ char	*fill_line(char *stash)
 	i = 0;
 	while (stash[i] != '\n' && stash[i])
 		i++;
-	line = malloc(sizeof(char) * i + 2);
+	line = malloc(sizeof(char) * i + 2); /*I +2 car 1 byute pour /n et 1 pour NULL*/
 	if (!line)
 		return (NULL);
 	ft_strlcpy(line, stash, i + 2);
@@ -116,7 +116,7 @@ static	char	*clear_stash(char *stash)
 	i = 0;
 	while (stash[i] && stash[i] != '\n')
 		i++;
-	if (stash[i] == '\0')
+	if (stash[i] == '\0') /*PERMET DE DIFFERENCIER LES CAS OU LA LIGNE TERMINE PAR /n et les fois ou non (ie toute derniere ligne)*/
 	{
 		new_stash = ft_strdup(&stash[i]);
 		free (stash);
@@ -130,14 +130,14 @@ static	char	*clear_stash(char *stash)
 	}
 	else
 	{
-		new_stash = ft_strdup(&stash[i + 1]);
+		new_stash = ft_strdup(&stash[i + 1]);  
 		free (stash); /*important je faisait pas*/
 		stash = NULL;
 		return (new_stash);
 	}
 }
 
-static char	*read_and_fill_stash(int fd,  char *stash)
+static char	*read_and_fill_stash(int fd, char *stash)
 {
 	ssize_t	bytes_read;
 	char	*temp;
@@ -150,13 +150,13 @@ static char	*read_and_fill_stash(int fd,  char *stash)
 	while (bytes_read > 0)
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
-		if (bytes_read < 0)
+		if (bytes_read <= 0)
 			break ;
-		buffer[bytes_read] = '\0';
+		buffer[bytes_read] = '\0'; /*bien penser a le faire sinon on va trop lire hihihihi (tuez moi)*/
 		if (!stash)
 			stash = ft_strdup("");
 		temp = ft_strdup(stash);
-		free (stash);
+		free (stash); /*free qui n'etais pas realiser donc memleaks KO 3eme test*/
 		stash = ft_strjoin(temp, buffer);
 		free (temp);
 		temp = NULL;
@@ -178,7 +178,7 @@ char	*get_next_line(int fd)
 		return (NULL);
 	}
 	stash = read_and_fill_stash(fd, stash);
-	if (!stash || stash[0] == '\0')
+	if (!stash)
 	{
 		free (stash);
 		stash = NULL;
