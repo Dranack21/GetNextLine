@@ -6,11 +6,12 @@
 /*   By: habouda <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 16:36:11 by habouda           #+#    #+#             */
-/*   Updated: 2024/05/29 16:23:47 by habouda          ###   ########.fr       */
+/*   Updated: 2024/05/29 17:22:29 by habouda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
 
 size_t	ft_strlen(char const *str)
 {

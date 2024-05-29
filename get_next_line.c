@@ -6,12 +6,12 @@
 /*   By: habouda <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 15:48:04 by habouda           #+#    #+#             */
-/*   Updated: 2024/05/29 16:52:49 by habouda          ###   ########.fr       */
+/*   Updated: 2024/05/29 17:23:35 by habouda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-# include <stdlib.h>
+/*# include <stdlib.h>
 # include <unistd.h>
 # include <stdio.h>
 # include <fcntl.h>
@@ -98,7 +98,7 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 	}
 	dst[i] = '\0';
 	return (src_len);
-}
+}*/
 
 char	*fill_line(char *stash)
 {
@@ -137,7 +137,7 @@ static	char	*clear_stash(char *stash)
 		new_stash = ft_strdup(&stash[i]);
 		free (stash);
 		stash = NULL;
-		if (!new_stash)
+		if (new_stash[0] == '\0')
 		{
 			free (new_stash);
 			return (NULL);
@@ -191,7 +191,7 @@ static char *read_and_fill_stash(int fd, char *buffer, char *stash)
 
 char	*get_next_line(int fd)
 {
-	char	buffer[BUFFER_SIZE];
+	char	buffer[BUFFER_SIZE + 1];
 	char	*line;
 	static	char *stash;
 
@@ -214,11 +214,14 @@ char	*get_next_line(int fd)
 		stash = clear_stash(stash);
 	}
 	else
-		stash++;
+	{
+		free (stash);
+		stash = NULL;
+	}
 	return (line);
 }
 
-int main(void)
+/*int main(void)
 {
 	int fd;
 	char *line;
@@ -241,4 +244,4 @@ int main(void)
 	// Close the file
 	close(fd);
 	return (0);
-}
+}*/
