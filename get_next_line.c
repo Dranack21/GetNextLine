@@ -6,7 +6,7 @@
 /*   By: habouda <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 15:48:04 by habouda           #+#    #+#             */
-/*   Updated: 2024/05/29 23:14:40 by habouda          ###   ########.fr       */
+/*   Updated: 2024/05/30 00:27:44 by habouda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ static	char	*clear_stash(char *stash)
 	}
 }
 
-static char *read_and_fill_stash(int fd, char *buffer, char *stash)
+static char	*read_and_fill_stash(int fd, char *buffer, char *stash)
 {
 	ssize_t	bytes_read;
 	char	*temp;
@@ -147,26 +147,28 @@ static char *read_and_fill_stash(int fd, char *buffer, char *stash)
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
 		if (bytes_read < 0)
-			break;
+			break ;
 		if (bytes_read == 0)
-			break;
+			break ;
 		buffer[bytes_read] = '\0';
-	if (!stash)
-		stash = ft_strdup("");
-	temp = ft_strdup(stash);
-	free (stash);
-	stash = ft_strjoin(temp, buffer);
-	free (temp);
-	temp = NULL;
- 	}
+		if (!stash)
+			stash = ft_strdup("");
+		temp = ft_strdup(stash);
+		free (stash);
+		stash = ft_strjoin(temp, buffer);
+		free (temp);
+		temp = NULL;
+		if (ft_strchr(buffer, '\n'))
+			break ;
+	}
 	return (stash);
 }
 
 char	*get_next_line(int fd)
 {
-	char	buffer[BUFFER_SIZE + 1];
-	char	*line;
-	static	char *stash;
+	char		buffer[BUFFER_SIZE + 1];
+	char		*line;
+	static char	*stash;
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 	{

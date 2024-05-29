@@ -6,16 +6,15 @@
 /*   By: habouda <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 16:36:11 by habouda           #+#    #+#             */
-/*   Updated: 2024/05/29 17:22:29 by habouda          ###   ########.fr       */
+/*   Updated: 2024/05/30 00:19:49 by habouda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-
 size_t	ft_strlen(char const *str)
 {
-	size_t i;
+	size_t	i;
 
 	i = 0;
 	while (str[i])
@@ -24,6 +23,7 @@ size_t	ft_strlen(char const *str)
 	}
 	return (i);
 }
+
 char	*ft_strdup(const char *source)
 {
 	int		i;
@@ -94,4 +94,24 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 	}
 	dst[i] = '\0';
 	return (src_len);
+}
+
+char	*ft_strchr(const char *str, int c)
+{
+	char	character;
+
+	character = c;
+	if (character == '\0')
+	{
+		while (*str)
+			str++;
+		return ((char *)str);
+	}
+	while (*str)
+	{
+		if (*str == character)
+			return ((char *)str);
+		str++;
+	}
+	return (0);
 }
