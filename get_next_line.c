@@ -6,7 +6,7 @@
 /*   By: habouda <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 15:48:04 by habouda           #+#    #+#             */
-/*   Updated: 2024/05/30 01:09:42 by habouda          ###   ########.fr       */
+/*   Updated: 2024/05/30 01:19:17 by habouda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,7 @@ static char	*read_and_fill_stash(int fd, char *stash)
 	while (bytes_read > 0)
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
-		if (bytes_read <= 0)
+		if (bytes_read < 0)
 			break ;
 		buffer[bytes_read] = '\0'; /*bien penser a le faire sinon on va trop lire hihihihi (tuez moi)*/
 		if (!stash)
@@ -177,8 +177,8 @@ char	*get_next_line(int fd)
 		stash = NULL;
 		return (NULL);
 	}
-	stash = read_and_fill_stash(fd, stash);
-	if (!stash)
+	stash = read_and_fill_stash(fd, stash); 
+	if (!stash || stash[0] == '\0') /*bien penser a stash[0] pour check les cas ou stash vide*/
 	{
 		free (stash);
 		stash = NULL;
