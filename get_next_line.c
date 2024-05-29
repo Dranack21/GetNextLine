@@ -6,7 +6,7 @@
 /*   By: habouda <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 15:48:04 by habouda           #+#    #+#             */
-/*   Updated: 2024/05/29 00:25:50 by habouda          ###   ########.fr       */
+/*   Updated: 2024/05/29 14:57:54 by habouda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,26 +101,37 @@ char	*fill_line(char *stash)
 	i = 0;
 	while (stash[i] != '\n' && stash[i])
 		i++;
-	if (stash[i] == 0 || stash[1] == 0)
+	line = malloc(sizeof(char) * i + 1);
+	ft_strlcpy(line, stash, i + 2);
+	if (!line)
 	{
+		free (line);
 		line = NULL;
-    	return (line);
 	}
-	if (stash[i] == '\n')
-	{
-		line = malloc(sizeof(char) * i + 1);
-		ft_strlcpy(line, stash, i + 2);
-		if (!line)
-		{
-			free (line);
-			line = NULL;
-		}
-	}
-	else 
-		line = NULL;
 	return (line);
 }
 
+static	char	*clear_stash(char *stash)
+{
+	int		i;
+	char	*new_stash;
+
+	i = 0;
+	while (stash[i] && stash[i] != '\n')
+		i++;
+	if (stash[i] == '\0')
+	{
+		new_stash = ft_strdup(&stash[i]);
+		free (stash);
+		return (new_stash);
+	}
+	else
+	{
+		new_stash = ft_strdup(&stash[i + 1]);
+		free (stash);
+		return (new_stash);
+	}
+}
 static char *read_and_fill_stash(int fd, char *buffer, char *stash)
 {
 	ssize_t	bytes_read;
@@ -130,6 +141,7 @@ static char *read_and_fill_stash(int fd, char *buffer, char *stash)
 	while (bytes_read > 0)
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		buffer[bytes_read] = '\0';
 		if (bytes_read < 0)
 			break;
 		if (bytes_read == 0)
@@ -151,11 +163,13 @@ char	*get_next_line(int fd)
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 		return (NULL);
 	stash = read_and_fill_stash(fd, buffer, stash);
-	if (! stash|| stash[0] == '\0')
+	if (!stash|| stash[0] == '\0')
 		return (NULL);
 	line = fill_line (stash);
 	if (line)
-		stash = stash + ft_strlen(line);
+	{
+		stash = clear_stash(stash);
+	}
 	else
 		stash++;
 	return (line);
