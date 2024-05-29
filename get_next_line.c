@@ -6,7 +6,7 @@
 /*   By: habouda <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 15:48:04 by habouda           #+#    #+#             */
-/*   Updated: 2024/05/29 16:15:16 by habouda          ###   ########.fr       */
+/*   Updated: 2024/05/29 16:52:49 by habouda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,11 @@ char	*ft_strdup(const char *source)
 	i = ft_strlen(source);
 	buffer = malloc(i * sizeof(char) + 1);
 	if (!buffer)
+	{
+		free (buffer);
+		buffer = NULL;
 		return (NULL);
+	}
 	i = 0;
 	while (source[i])
 	{
@@ -55,7 +59,10 @@ char	*ft_strjoin(char const *s1, char const *s2)
 
 	dest = malloc (sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
 	if (!dest)
+	{
+		free (dest);
 		return (NULL);
+	}
 	i = 0;
 	j = 0;
 	while (s1[i])
@@ -102,6 +109,12 @@ char	*fill_line(char *stash)
 	while (stash[i] != '\n' && stash[i])
 		i++;
 	line = malloc(sizeof(char) * i + 1);
+	if (!line)
+	{
+		free (line);
+		line = NULL;
+		return (NULL);
+	}
 	ft_strlcpy(line, stash, i + 2);
 	if (!line)
 	{
@@ -124,6 +137,11 @@ static	char	*clear_stash(char *stash)
 		new_stash = ft_strdup(&stash[i]);
 		free (stash);
 		stash = NULL;
+		if (!new_stash)
+		{
+			free (new_stash);
+			return (NULL);
+		}
 		return (new_stash);
 	}
 	else
@@ -134,6 +152,7 @@ static	char	*clear_stash(char *stash)
 		return (new_stash);
 	}
 }
+
 static char *read_and_fill_stash(int fd, char *buffer, char *stash)
 {
 	ssize_t	bytes_read;
@@ -161,7 +180,7 @@ static char *read_and_fill_stash(int fd, char *buffer, char *stash)
 	{
 		free (temp);
 		temp = NULL;
-		return (temp);
+		return (NULL);
 	}
 	stash = ft_strjoin(temp, buffer);
 	free (temp);
