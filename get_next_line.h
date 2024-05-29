@@ -6,7 +6,7 @@
 /*   By: habouda <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 15:51:30 by habouda           #+#    #+#             */
-/*   Updated: 2024/05/29 17:24:14 by habouda          ###   ########.fr       */
+/*   Updated: 2024/05/29 23:13:30 by habouda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 #ifndef BUFFER_SIZE
-# define BUFFER_SIZE 42
+# define BUFFER_SIZE 100
 #endif
 # include <stdlib.h>
 # include <unistd.h>

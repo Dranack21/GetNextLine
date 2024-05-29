@@ -6,7 +6,7 @@
 /*   By: habouda <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 15:48:04 by habouda           #+#    #+#             */
-/*   Updated: 2024/05/29 17:23:35 by habouda          ###   ########.fr       */
+/*   Updated: 2024/05/29 23:14:40 by habouda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,7 @@ char	*ft_strdup(const char *source)
 	i = ft_strlen(source);
 	buffer = malloc(i * sizeof(char) + 1);
 	if (!buffer)
-	{
-		free (buffer);
-		buffer = NULL;
 		return (NULL);
-	}
 	i = 0;
 	while (source[i])
 	{
@@ -59,10 +55,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 
 	dest = malloc (sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
 	if (!dest)
-	{
-		free (dest);
 		return (NULL);
-	}
 	i = 0;
 	j = 0;
 	while (s1[i])
@@ -108,19 +101,10 @@ char	*fill_line(char *stash)
 	i = 0;
 	while (stash[i] != '\n' && stash[i])
 		i++;
-	line = malloc(sizeof(char) * i + 1);
+	line = malloc(sizeof(char) * i + 2);
 	if (!line)
-	{
-		free (line);
-		line = NULL;
 		return (NULL);
-	}
 	ft_strlcpy(line, stash, i + 2);
-	if (!line)
-	{
-		free (line);
-		line = NULL;
-	}
 	return (line);
 }
 
@@ -147,7 +131,7 @@ static	char	*clear_stash(char *stash)
 	else
 	{
 		new_stash = ft_strdup(&stash[i + 1]);
-		free (stash);
+		free (stash); /*important je faisait pas*/
 		stash = NULL;
 		return (new_stash);
 	}
@@ -162,26 +146,15 @@ static char *read_and_fill_stash(int fd, char *buffer, char *stash)
 	while (bytes_read > 0)
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
-		buffer[bytes_read] = '\0';
 		if (bytes_read < 0)
 			break;
 		if (bytes_read == 0)
 			break;
+		buffer[bytes_read] = '\0';
 	if (!stash)
 		stash = ft_strdup("");
-	if (!stash)
-	{
-		free (stash);
-		stash = NULL;
-		return (NULL);
-	}
 	temp = ft_strdup(stash);
-	if (!temp)
-	{
-		free (temp);
-		temp = NULL;
-		return (NULL);
-	}
+	free (stash);
 	stash = ft_strjoin(temp, buffer);
 	free (temp);
 	temp = NULL;
@@ -209,15 +182,7 @@ char	*get_next_line(int fd)
 		return (NULL);
 	}
 	line = fill_line (stash);
-	if (line)
-	{
-		stash = clear_stash(stash);
-	}
-	else
-	{
-		free (stash);
-		stash = NULL;
-	}
+	stash = clear_stash(stash);
 	return (line);
 }
 
@@ -235,11 +200,14 @@ char	*get_next_line(int fd)
 	}
 
 	// Read and display lines from the file until the end
-	while ((line = get_next_line(fd)) != NULL)
-	{
-		printf("%s", line);
-		free(line);  // Free the memory allocated for the line
-	}
+	(line = get_next_line(fd));
+	printf("%s", line);
+	free(line);  // Free the memory allocated for the line
+	(line = get_next_line(fd));
+	printf("%s", line);
+	free(line);  // Free the memory allocated for the line
+
+
 
 	// Close the file
 	close(fd);
